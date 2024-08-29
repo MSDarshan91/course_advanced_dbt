@@ -5,3 +5,28 @@ sources:
     tables:
       - name: daily_ads
         identifier: ads
+        description: '{{ doc("bingeflix_table_ads") }}'
+        columns:
+          - name: date
+            description: '{{ doc("bingeflix_column_date") }}'
+            data_tests:
+              - not_null
+              - unique
+
+          - name: campaign_id 
+            description: '{{ doc("bingeflix_column_campaign_id") }}'
+            data_tests:
+              - not_null
+
+          - name: spend
+            description: '{{ doc("bingeflix_column_spend") }}'
+            data_tests:
+              - not_null
+
+          - name: cpm
+            description: '{{ doc("bingeflix_column_cpm") }}'
+
+          - name: ctr
+            description: '{{ doc("bingeflix_column_ctr") }}'
+            data_tests:
+              - not_null
