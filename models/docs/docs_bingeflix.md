@@ -5,11 +5,11 @@ This file contains doumentation for Bingeflix data sources.
 This section contains documentation from the Bingeflix Users table.
 
 {% docs bingeflix_table_users %}
-This table stores user profile information, including personal details, account status, and regional data.
+This table stores information about Bingeflix users, including user IDs, usernames, email addresses, subscription start dates, and other relevant user details
 {% enddocs %}
 
 {% docs bingeflix_column_user_id %}
-Unique identifier of the Bingeflix user.
+The unique identifier of the user.
 {% enddocs %}
 
 {% docs bingeflix_column_created_at_user %}
@@ -21,11 +21,11 @@ Phone number associated with the user.
 {% enddocs %}
 
 {% docs bingeflix_column_deleted_at %}
-Timestamp when the user account was deleted.
+Timestamp when the user account was deleted. (This is NULL if the account is not deleted.)
 {% enddocs %}
 
 {% docs bingeflix_column_username %}
-Username chosen by the user.
+The username used for login
 {% enddocs %}
 
 {% docs bingeflix_column_name %}
@@ -60,7 +60,7 @@ The table contains data related to ad campaigns, including financial metrics lik
 {% enddocs %}
 
 {% docs bingeflix_column_date %}
-The date when the ad campaign data was recorded.
+The date when the ad campaign data was served.
 {% enddocs %}
 
 {% docs bingeflix_column_campaign_id %}
@@ -72,11 +72,11 @@ Total amount spent on the ad campaign.
 {% enddocs %}
 
 {% docs bingeflix_column_cpm %}
-Cost per thousand impressions for the ad campaign.
+The average cost per 1,000 impressions.
 {% enddocs %}
 
 {% docs bingeflix_column_ctr %}
-Click-through rate for the ad campaign, calculated as the number of clicks divided by the number of impressions.
+The average click-through rate on ads served, calculated as the number of clicks divided by the number of impressions.
 {% enddocs %}
 
 ## Events
@@ -96,7 +96,7 @@ Timestamp when the event was created.
 {% enddocs %}
 
 {% docs bingeflix_column_event_name %}
-Name of the event that occurred (e.g., play, pause, search).
+Name of the event that occurred.
 {% enddocs %}
 
 {% docs bingeflix_column_event_id %}
@@ -108,7 +108,7 @@ This section contains documentation from the Bingeflix Subscriptions table.
 
 
 {% docs bingeflix_table_subscriptions %}
-Contains data on user subscriptions, including the start and end dates, and the associated subscription plan.
+This table contains subscription-related information, such as subscription plan IDs, subscription start dates, renewal dates, billing information, and any other relevant subscription details.
 {% enddocs %}
 
 {% docs bingeflix_column_subscription_starts_at %}
@@ -116,7 +116,7 @@ Timestamp indicating when the subscription started.
 {% enddocs %}
 
 {% docs bingeflix_column_subscription_ends_at %}
-Timestamp indicating when the subscription ended or is set to expire.
+Timestamp indicating when the subscription ended or is set to expire. The value is NULL if the subscription plan has auto-renew turned on/does not have a defined end date.
 {% enddocs %}
 
 {% docs bingeflix_column_subscription_id %}
@@ -129,7 +129,7 @@ This section contains documentation from the Bingeflix Subscription Plans table.
 
 
 {% docs bingeflix_table_subscription_plans %}
-Details about the different subscription plans available to users, including pricing and payment periods.
+This table contains information about the subscription plans available at Bingeflix
 {% enddocs %}
 
 {% docs bingeflix_column_subscription_plan_id %}
@@ -141,9 +141,9 @@ Name of the subscription plan (e.g., Basic, Premium).
 {% enddocs %}
 
 {% docs bingeflix_column_subscription_plan_pricing %}
-The cost associated with the subscription plan.
+The price of the subscription plan per payment period.
 {% enddocs %}
 
 {% docs bingeflix_column_subscription_plan_payment_period %}
-The payment period for the plan (e.g., monthly, yearly).
+The payment period for the plan (e.g., monthly, annually).
 {% enddocs %}
