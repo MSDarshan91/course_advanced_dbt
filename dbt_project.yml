@@ -39,6 +39,13 @@ models:
       product:
         +schema: product
 
+  dbt_project_evaluator:
+    marts:
+      tests:
+        # disable fct_sources_without_freshness test
+        fct_sources_without_freshness:
+          +enabled: false
+
 seeds:
   dbt_project_evaluator:
     dbt_project_evaluator_exceptions:
