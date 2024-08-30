@@ -1,33 +1,34 @@
-WITH
+with
 
-events AS (
-    SELECT
+events as (
+    select
         user_id,
-        DATE(created_at) AS created_date,
-        event_id AS login_id
-    FROM
+        DATE(created_at) as created_date,
+        event_id as login_id
+    from
         {{ ref('fct_events')}}
-    WHERE
+    where
         event_name = 'User Logged In'
 ),
 
-date_spine AS (
-    SELECT
+date_spine as (
+    select
         calendar_date,
         date_week
-    FROM
+    from
         {{ ref('int_dates')}}
 ),
 
-final AS (
-    SELECT
-        {{ dbt_utils.generate_surrogate_key(['date_week', 'user_id']) }} AS surrogate_key,
+final as (
+    select
+        {{ dbt_utils.generate_surrogate_key(['date_week', 'user_id']) }} as surrogate_key,
         date_week,
         user_id,
-        COUNT(DISTINCT login_id) AS login_count
-    FROM
+        COUNT(distinct login_id) as login_count
+    from
         date_spine
-        LEFT JOIN events ON date_spine.calendar_date = events.created_date
-    GROUP BY ALL
+        left join events on date_spine.calendar_date = events.created_date
+    group by all
 )
-SELECT * FROM final
+
+select * from final

@@ -1,7 +1,7 @@
-WITH
+with
 
-final AS (
-    SELECT
+final as (
+    select
         s.subscription_id,
         s.subscription_plan_id,
         s.user_id,
@@ -9,11 +9,11 @@ final AS (
         s.ends_at,
         sp.plan_name,
         sp.pricing,
-        sp.payment_period AS billing_period
-    FROM
-        {{ ref('stg_bingeflix__subscriptions') }} AS s
-        LEFT JOIN {{ ref('stg_bingeflix__subscription_plans') }} AS sp
-            ON s.subscription_plan_id = sp.subscription_plan_id
+        sp.payment_period as billing_period
+    from
+        {{ ref('stg_bingeflix__subscriptions') }} as s
+        left join {{ ref('stg_bingeflix__subscription_plans') }} as sp
+            on s.subscription_plan_id = sp.subscription_plan_id
 )
 
-SELECT * FROM final
+select * from final
