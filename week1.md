@@ -1,6 +1,6 @@
 ### Task 2: Add docs blocks to populate missing documentation and maintain consistency
 
-Added all the description to `models/docs/docs_bingeflix.md` and referenced the docs blocks in `source_ads_platform.yml` & `source_bingeflix.yml` files.
+Added all the descriptions to `models/docs/docs_bingeflix.md` and referenced the docs blocks in `source_ads_platform.yml` & `source_bingeflix.yml` files.
 
 ### Task 3: Install dbt_project_evaluator package to enforce best practices
 - I added the missing fct_events.yml file. The file includes the description of the fct_events model and the columns. In addition to that, the unit tests associated with the columns are are also added. This one change resolved the following issues 
