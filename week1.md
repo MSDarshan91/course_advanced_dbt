@@ -18,4 +18,4 @@ Added all the descriptions to `models/docs/docs_bingeflix.md` and referenced the
 - In fct_active_users model, I replaced the reference table from stg_bingeflix__events to fct_events. This helped reolve the `is_empty_fct_model_fanout_` issue. 
 
 ### Task 4: Install SQLFluff and run it to fix violations
-Installed sqlfluff and fixed the violations with `sqlfluff fix -p0` command.
+Installed sqlfluff and fixed the violations with `sqlfluff fix -p0` command. In addition to the example sqlfull configuration, I also added a new capitalisation_policy.
