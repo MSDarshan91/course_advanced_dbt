@@ -14,7 +14,7 @@ sources:
               - not_null
               - unique
 
-          - name: campaign_id 
+          - name: campaign_id
             description: '{{ doc("bingeflix_column_campaign_id") }}'
             data_tests:
               - not_null
