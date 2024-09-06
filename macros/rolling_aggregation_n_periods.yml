@@ -1,0 +1,27 @@
+macros:
+  - name: rolling_aggregation_n_periods
+    description: >
+            Calculates rolling metric over the n periods aggregating using some function (eg. sum, avg, median)
+            Input parameters:
+              column_name
+              partition_by
+              order_by
+              number_of_periods
+              aggregation_type
+
+    arguments:
+      - name: column_name
+        type: string
+        description: Name of the column using which the aggregation will be calculated
+      - name: partition_by
+        type: string
+        description: Name of the column that is required by the window function.
+      - name: order_by
+        type: string
+        description: Name of the column to order the values within a window partition.
+      - name: number_of_periods
+        type: int
+        description: Length of each window partition.
+      - name: aggregation_type
+        type: string
+        description: Name of the agregating function that will be applied.
