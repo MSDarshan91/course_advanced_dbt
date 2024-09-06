@@ -1,0 +1,8 @@
+macros:
+  - name: truncate_to_month
+    description:  truncates date or timestamp to month. The output will be in date format
+
+    arguments:
+      - name: date
+        type: date
+        description: Name of the column which will be truncated to month. This macro can also take timestamp as input.

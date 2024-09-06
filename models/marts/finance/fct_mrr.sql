@@ -15,8 +15,8 @@ monthly_subscriptions as (
         ends_at,
         plan_name,
         pricing,
-        DATE(DATE_TRUNC('month', starts_at)) as start_month,
-        DATE(DATE_TRUNC('month', ends_at)) as end_month
+        truncate_to_month(starts_at) as start_month,
+        truncate_to_month(ends_at) as end_month
     from
         {{ ref('dim_subscriptions') }}
     where
@@ -48,8 +48,8 @@ subscription_periods as (
         -- For users that cancel in the first month, set their end_month to next month because the subscription remains active until the end of the first month
         -- For users who haven't ended their subscription yet (end_month is NULL) set the end_month to one month from the current date (these rows will be removed from the final CTE)
         case
-            when start_month = end_month then DATEADD('month', 1, end_month)
-            when end_month is NULL then DATE(DATEADD('month', 1, DATE_TRUNC('month', CURRENT_DATE)))
+            when start_month = end_month then dateadd('month', 1, end_month)
+            when end_month is NULL then date(dateadd('month', 1, truncate_to_month(current_date)))
             else end_month
         end as end_month
     from
@@ -61,8 +61,8 @@ subscribers as (
     select
         user_id,
         subscription_id,
-        MIN(start_month) as first_start_month,
-        MAX(end_month) as last_end_month
+        min(start_month) as first_start_month,
+        max(end_month) as last_end_month
     from
         subscription_periods
     group by
@@ -90,7 +90,7 @@ mrr_base as (
         subscriber_months.date_month,
         subscriber_months.user_id,
         subscriber_months.subscription_id,
-        COALESCE(subscription_periods.monthly_amount, 0.0) as mrr
+        coalesce(subscription_periods.monthly_amount, 0.0) as mrr
     from
         subscriber_months
         left join subscription_periods
@@ -112,8 +112,8 @@ subscription_revenue_by_month as (
         mrr > 0 as is_subscribed_current_month,
 
         -- Find the subscriber's first month and last subscription month
-        MIN(case when is_subscribed_current_month then date_month end) over (partition by user_id, subscription_id) as first_subscription_month,
-        MAX(case when is_subscribed_current_month then date_month end) over (partition by user_id, subscription_id) as last_subscription_month,
+        min(case when is_subscribed_current_month then date_month end) over (partition by user_id, subscription_id) as first_subscription_month,
+        max(case when is_subscribed_current_month then date_month end) over (partition by user_id, subscription_id) as last_subscription_month,
         first_subscription_month = date_month as is_first_subscription_month,
         last_subscription_month = date_month as is_last_subscription_month,
         mrr
@@ -124,7 +124,7 @@ subscription_revenue_by_month as (
 -- Calculate subscriber level churn by month by getting row for month *after* last month of activity
 subscription_churn_by_month as (
     select
-        DATEADD(month, 1, date_month)::DATE as date_month,
+        dateadd(month, 1, date_month)::date as date_month,
         user_id,
         subscription_id,
         FALSE as is_subscribed_current_month,
@@ -132,7 +132,7 @@ subscription_churn_by_month as (
         last_subscription_month,
         FALSE as is_first_subscription_month,
         FALSE as is_last_subscription_month,
-        0.0::DECIMAL(18, 2) as mrr
+        0.0::decimal(18, 2) as mrr
     from
         subscription_revenue_by_month
     where
@@ -151,13 +151,13 @@ mrr_with_changes as (
     select
         *,
 
-        COALESCE(
-            LAG(is_subscribed_current_month) over (partition by user_id, subscription_id order by date_month),
+        coalesce(
+            lag(is_subscribed_current_month) over (partition by user_id, subscription_id order by date_month),
             FALSE
         ) as is_subscribed_previous_month,
 
-        COALESCE(
-            LAG(mrr) over (partition by user_id, subscription_id order by date_month),
+        coalesce(
+            lag(mrr) over (partition by user_id, subscription_id order by date_month),
             0.0
         ) as previous_month_mrr_amount,
 
@@ -177,7 +177,7 @@ final as (
         subscription_periods.plan_name,
         mrr as mrr_amount,
         mrr_change,
-        LEAST(mrr, previous_month_mrr_amount) as retained_mrr_amount,
+        least(mrr, previous_month_mrr_amount) as retained_mrr_amount,
         previous_month_mrr_amount,
 
         case
@@ -192,7 +192,7 @@ final as (
         -- Add month_retained_number for cohort analysis
         case
             when change_category = 'churn' then NULL
-            else DATEDIFF('month', first_subscription_month, date_month)
+            else datediff('month', first_subscription_month, date_month)
         end as month_retained_number
 
     from
@@ -201,7 +201,7 @@ final as (
             on mrr_with_changes.user_id = subscription_periods.user_id
                 and mrr_with_changes.subscription_id = subscription_periods.subscription_id
     where
-        date_month <= DATE_TRUNC('month', CURRENT_DATE)
+        date_month <= truncate_to_month(current_date)
 )
 
 select
