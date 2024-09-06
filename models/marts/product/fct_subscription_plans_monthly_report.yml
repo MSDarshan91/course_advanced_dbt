@@ -1,0 +1,24 @@
+models:
+  - name: fct_subscription_plans_monthly_report
+    description: This model provides some metrics about subscription plans
+    columns:
+      - name: surrogate_key
+        description: The primary key for the table. A concatenation of subscription_plan_id & subscription_month hashed.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: subscription_plan_id
+        description: '{{ doc("bingeflix_column_subscription_plan_id") }}'
+
+      - name: plan_name
+        description:  '{{ doc("bingeflix_column_subscription_plan_name") }}'
+
+      - name: subscription_month
+        description: Month when the subscription started
+
+      - name: total_subscriptions_per_month
+        description: The total number of subscriptions for a subscription plan
+
+      - name: avg_6_periods_total_subscriptions_per_month
+        description: 6 month rolling average of subscriptions per month.
