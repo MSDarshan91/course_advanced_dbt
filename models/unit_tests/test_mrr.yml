@@ -1,0 +1,26 @@
+unit_tests:
+  - name: test_mrr
+    description: To test correct calculation of mrr column.
+    model: fct_mrr
+    given:
+      - input: ref('int_dates')
+        format: csv
+        rows: |
+              CALENDAR_DATE,DATE_WEEK,DATE_MONTH,DATE_QUARTER,DATE_YEAR,DAY_OF_MONTH,YEAR_NUM,QUARTER_NUM,MONTH_NUM
+              2019-01-01,2018-12-31,2019-01-01,2019-01-01,2019-01-01,1,2019,1,1
+              2019-01-02,2018-12-31,2019-01-01,2019-01-01,2019-01-01,2,2019,1,1
+              2019-01-03,2018-12-31,2019-01-01,2019-01-01,2019-01-01,3,2019,1,1
+      - input: ref('dim_subscriptions')
+        format: csv
+        rows: |
+              SUBSCRIPTION_ID,SUBSCRIPTION_PLAN_ID,USER_ID,STARTS_AT,ENDS_AT,PLAN_NAME,PRICING,BILLING_PERIOD
+              0,2,46344,2019-01-02T02:49:50Z,2019-01-06T02:49:50Z,Basic,0.10,monthly
+              2,1,77735,2019-01-02T17:02:22Z,2019-02-05T17:02:22Z,Standard with Ads,0.06,monthly
+    expect:
+      format: csv
+      rows: |
+            SURROGATE_KEY,DATE_MONTH,USER_ID,SUBSCRIPTION_ID,STARTS_AT,ENDS_AT,PLAN_NAME,MRR_AMOUNT,MRR_CHANGE,RETAINED_MRR_AMOUNT,PREVIOUS_MONTH_MRR_AMOUNT,CHANGE_CATEGORY,MONTH_RETAINED_NUMBER
+            2563354c5b561e094c2d0e48bc6c8264,2019-01-01,46344,0,2019-01-02T02:49:50Z,2019-01-06T02:49:50Z,Basic,0.10,0.10,0.00,0.00,new,0
+            39cf41c49cf0c52d2413e296b053e6d6,2019-02-01,46344,0,2019-01-02T02:49:50Z,2019-01-06T02:49:50Z,Basic,0.00,-0.10,0.00,0.10,churn,
+            6f75c337a476d0ee8b446a18bb7a6d39,2019-02-01,77735,2,2019-01-02T17:02:22Z,2019-02-05T17:02:22Z,Standard with Ads,0.00,-0.06,0.00,0.06,churn,
+            7b953661cea5173b35a146cc4a9b6ce9,2019-01-01,77735,2,2019-01-02T17:02:22Z,2019-02-05T17:02:22Z,Standard with Ads,0.06,0.06,0.00,0.00,new,0
