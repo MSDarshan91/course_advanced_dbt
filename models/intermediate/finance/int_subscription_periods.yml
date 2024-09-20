@@ -1,0 +1,31 @@
+models:
+  - name: int_subscription_periods
+    description: This is an intermediate model that calculates subscription period start_month and end_month ranges.
+    columns:
+      - name: subscription_id
+        description: The subscription identifier.
+        tests:
+          - not_null
+          - unique
+      - name: user_id
+        description:  '{{ doc("bingeflix_column_user_id") }}'
+        tests:
+          - not_null
+      - name: plan_name
+        description: The name of the subscription plan.
+        tests:
+          - not_null
+      - name: monthly_amount
+        description: The price of the subscription.
+        tests:
+          - not_null
+      - name: starts_at
+        description: When the subscription started.
+        tests:
+          - not_null
+      - name: ends_at
+        description: When the subscription ends. This value is NULL if the subscription is active.
+      - name: start_month
+        description: The month the subscription is considered started for the purposes of MRR reporting.
+      - name: end_month
+        description: The month the subscription is considered ended for the purposes of MRR reporting.

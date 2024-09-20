@@ -3,24 +3,10 @@
 
 -- This model is created following the dbt MRR playbook: https://www.getdbt.com/blog/modeling-subscription-revenue/
 
-with
+with subscription_periods as (
 
--- Import CTEs
--- Get raw monthly subscriptions
-monthly_subscriptions as (
-    select
-        subscription_id,
-        user_id,
-        starts_at,
-        ends_at,
-        plan_name,
-        pricing,
-        DATE(DATE_TRUNC('month', starts_at)) as start_month,
-        DATE(DATE_TRUNC('month', ends_at)) as end_month
-    from
-        {{ ref('dim_subscriptions') }}
-    where
-        billing_period = 'monthly'
+    select * from {{ ref('int_subscription_periods') }}
+
 ),
 
 -- Use the dates spine to generate a list of months
@@ -31,29 +17,6 @@ months as (
         {{ ref('int_dates') }}
     where
         day_of_month = 1
-),
-
--- Logic CTEs
--- Create subscription period start_month and end_month ranges
-subscription_periods as (
-    select
-        subscription_id,
-        user_id,
-        plan_name,
-        pricing as monthly_amount,
-        starts_at,
-        ends_at,
-        start_month,
-
-        -- For users that cancel in the first month, set their end_month to next month because the subscription remains active until the end of the first month
-        -- For users who haven't ended their subscription yet (end_month is NULL) set the end_month to one month from the current date (these rows will be removed from the final CTE)
-        case
-            when start_month = end_month then DATEADD('month', 1, end_month)
-            when end_month is NULL then DATE(DATEADD('month', 1, DATE_TRUNC('month', CURRENT_DATE)))
-            else end_month
-        end as end_month
-    from
-        monthly_subscriptions
 ),
 
 -- Determine when given subscription plan's first and most recent months
